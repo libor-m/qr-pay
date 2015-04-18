@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <style>
 body { 
 	margin:0px; 
@@ -9,23 +10,43 @@ body {
 	}
 
 #txtar { 
-	height: 200px; 
+	height: 100px; 
 	width: 300px; 
 	max-width:780px; 
 	max-height:560px; 
 	min-width:300px; 
-	min-height:200px; 
+	min-height:50px; 
 	padding:6px; 
 	margin:0px; 
 	background-color:white; 
 	color:#000088; 
 	border:none;
 	}
+
 </style>
+<script src="banks.js"></script>
 </head>
 
 <body>
-<textarea id="txtar" readonly></textarea>
+<form>
+<table>
+<tr>
+ <td><label for="to">Prijemce</label></td><td><input id="to"/></td></tr>
+<tr>
+ <td><label for="bank">Banka</label></td><td><input id="bank"/></td></tr>
+<tr>
+ <td><label for="amount">Castka</label></td><td><input id="amount"/></td></tr>
+<tr>
+ <td><label for="vs">Variabilni symbol</label></td><td><input id="vs"/></td></tr>
+<tr>
+ <td><label for="ss">Specificky symbol</label></td><td><input id="ss"/></td></tr>
+<tr>
+ <td><label for="ks">Konstantni symbol</label></td><td><input id="ks"/></td></tr>
+</form>
+
 <script src="popup.js"></script>
+
+<div id="qr"></div>
+
 </body>
 </html>
