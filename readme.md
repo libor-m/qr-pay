@@ -10,3 +10,4 @@ Written (only) for Czech Republic banking system wire transfers.
 - show all available strings for all fields (needs either fixing of chrome's datalist bug
   or some jQuery substitution of combo-box)
 - find out if it is possible to encode 'message for self' in the spayd
+- validation for freeform input
