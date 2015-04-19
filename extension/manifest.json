@@ -1,9 +1,9 @@
 {
    "manifest_version": 2,
    "name": "QR Pay",
-   "version": "0.2",
+   "version": "0.2.1",
 
-   "description": "Označte text obsahující detaily bankovního převodu, a snadno zaplaťte pomocí mobilní aplikace vaší banky.",
+   "description": "Označte text obsahující detaily bankovního převodu, a jednoduše zaplaťte pomocí mobilní aplikace vaší banky.",
    "icons": {
       "16": "img/icon-qr-16.png",
       "48": "img/icon-qr-48.png"
