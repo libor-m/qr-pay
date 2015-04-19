@@ -1,8 +1,10 @@
+//
 // this is called when the popup is invoked
 // it registers a callback and then injects a script into 
 // current active tab
 // the injected script grabs the selected text and sends it back 
 // to the popup as a message
+//
 
 // mix of information in 
 // http://qr-platba.cz/pro-vyvojare/restful-api/
@@ -199,6 +201,8 @@ function processText(msg) {
     // TODO: use datalist with all acceptable values
     // sorted by preference
     // http://stackoverflow.com/questions/14614702/html-combo-box-with-option-to-type-an-entry
+    // datalist does not work in popups: https://code.google.com/p/chromium/issues/detail?id=161302
+    // so this will wait until it resolves..;)
 
     // prefer ceska sporitelna (after all it's my tool;)
     // then any
@@ -230,7 +234,8 @@ function processText(msg) {
         fillForm("ks", vals.ksymbols[0].ks);
     }
 
-    // TODO: add custom messages (sender id and recipient message)
+    // TODO: add custom messages for sender (use window title as default)
+    // need to ask CS if they read it from any spayd field
 }
 
 // collect values from the form into params object

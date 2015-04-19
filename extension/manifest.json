@@ -1,9 +1,9 @@
 {
    "manifest_version": 2,
-   "name": "QR PAY",
-   "version": "0.1",
+   "name": "QR Pay",
+   "version": "0.2",
 
-   "description": "Select payment details and click to get a QR to pay.",
+   "description": "Označte text obsahující detaily bankovního převodu, a snadno zaplaťte pomocí mobilní aplikace vaší banky (musí podpodovat načtení platby z QR kódu).",
    "icons": {
       "16": "img/icon-qr-16.png",
       "48": "img/icon-qr-48.png"
@@ -11,7 +11,7 @@
 
    "browser_action": {
       "default_icon": "img/icon-qr-16.png",
-      "default_title": "QR Payment: select text and click",
+      "default_title": "QR Pay: označ text a klikni",
       "default_popup": "popup.html"
    },
 
