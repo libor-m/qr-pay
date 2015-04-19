@@ -266,7 +266,11 @@ function collectParams() {
     // and returns them in {"field": getVal("field")}
     function multiGet(names) {
         return names.reduce(function(acc, x){
-            acc[x] = getVal(x); return acc;
+            var v = getVal(x);
+            if (v != "") {
+                acc[x] = v;
+            }
+            return acc;
         }, {});
     }
     var res = parseAccount(getVal("to"));
