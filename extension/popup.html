@@ -31,22 +31,26 @@ body {
 <form>
 <table>
 <tr>
- <td><label for="to">Prijemce</label></td><td><input id="to"/></td></tr>
+ <td><label for="to">Příjemce</label></td><td><input id="to" /></td></tr>
 <tr>
- <td><label for="bank">Banka</label></td><td><input id="bank"/></td></tr>
+ <td><label for="bank">Banka</label></td><td><input id="bank" readonly /></td></tr>
 <tr>
- <td><label for="amount">Castka</label></td><td><input id="amount"/></td></tr>
+ <td><label for="amount">Částka</label></td><td><input id="amount"/></td></tr>
 <tr>
- <td><label for="vs">Variabilni symbol</label></td><td><input id="vs"/></td></tr>
+ <td><label for="vs">Variabilní symbol</label></td><td><input id="vs"/></td></tr>
 <tr>
- <td><label for="ss">Specificky symbol</label></td><td><input id="ss"/></td></tr>
+ <td><label for="ss">Specifický symbol</label></td><td><input id="ss"/></td></tr>
 <tr>
- <td><label for="ks">Konstantni symbol</label></td><td><input id="ks"/></td></tr>
+ <td><label for="ks">Konstantní symbol</label></td><td><input id="ks"/></td></tr>
+<!--<tr>
+ <td><label for="identifier">Můj popis</label></td><td><input id="identifier"/></td></tr>-->
+<tr>
+ <td><label for="message">Zpráva pro příjemce</label></td><td><input id="message"/></td></tr>
 </form>
 
 <script src="popup.js"></script>
 
-<div id="qr"></div>
+<div id="qr"><img id="qr_img" src="img/empty-qr.png" width="298" height="293"></div>
 
 </body>
 </html>
