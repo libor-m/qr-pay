@@ -3,7 +3,7 @@
    "name": "QR Pay",
    "version": "0.2",
 
-   "description": "Označte text obsahující detaily bankovního převodu, a snadno zaplaťte pomocí mobilní aplikace vaší banky (musí podpodovat načtení platby z QR kódu).",
+   "description": "Označte text obsahující detaily bankovního převodu, a snadno zaplaťte pomocí mobilní aplikace vaší banky.",
    "icons": {
       "16": "img/icon-qr-16.png",
       "48": "img/icon-qr-48.png"
