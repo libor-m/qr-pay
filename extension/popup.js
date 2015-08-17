@@ -104,7 +104,7 @@ function extractAccounts(s) {
     // due to the mod11 validation, there is no valid 1 number prefix
     // except for 0
     var acc_re = /(\d{1,6})-(\d{6,10})\/(\d{4})/g;
-    var acc0_re = /[^-](\d{10})\/(\d{4})/g;
+    var acc0_re = /[^-](\d{6,10})\/(\d{4})/g;
 
     // extract all prefixed numbers
     // and append all non-prefixed numbers, setting prefix to '0'
@@ -143,8 +143,8 @@ function extractDetails(s) {
         .map(function(e) { return {"ks": e} });
 
     // amount (pick highest amount)
-    var amount_re = /([1-9][0-9 ,.]+) +(?=CZK|KC|KČ)/gi;
-    var amount2_re = /([1-9][0-9 ]+)(?=,-)/g;
+    var amount_re = /([1-9][0-9\s,.]+)\s+(?=CZK|KC|KČ)/gi;
+    var amount2_re = /([1-9][0-9\s]+)(?=,-)/g;
 
     var amounts = extractAll(s, amount_re)
         .concat(extractAll(s, amount2_re))
