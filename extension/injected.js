@@ -6,3 +6,7 @@ if (!selection.isCollapsed) {
     chrome.runtime.sendMessage(selection.toString())
 } 
 
+//document.execCommand('Copy');
+// this does not work 
+// neither in the pdf plugin page
+// nor in pdf preview of gmail..
