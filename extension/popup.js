@@ -1,14 +1,14 @@
 //
 // this is called when the popup is invoked
-// it registers a callback and then injects a script into 
+// it registers a callback and then injects a script into
 // current active tab
-// the injected script grabs the selected text and sends it back 
+// the injected script grabs the selected text and sends it back
 // to the popup as a message
 //
 
-// mix of information in 
+// mix of information in
 // http://qr-platba.cz/pro-vyvojare/restful-api/
-// and 
+// and
 // http://qr-platba.cz/pro-vyvojare/restful-api/#generator-czech-image
 // was used - the information is not always correct
 var qr_api = "https://api.paylibo.com/paylibo/generator/czech/image?"
@@ -70,7 +70,7 @@ function extractAll(s, re) {
 // vyhlaska 169/2011 Sb.
 // http://www.zlatakoruna.info/zpravy/ucty/cislo-uctu-v-cr
 // http://www.penize.cz/bezne-ucty/15470-tajemstvi-cisla-uctu
-// validace (prefix a core): 
+// validace (prefix a core):
 // ABCDEFGHIJ
 //         19
 // 3321280297
@@ -99,12 +99,14 @@ function validateAcc(pfx, num, bank) {
 // try to pick all valid account numbers in the text
 function extractAccounts(s) {
     // prefixed form
-    // 19-3321280297/0100 
+    // 19-3321280297/0100
     // or 3321280297/0100
     // due to the mod11 validation, there is no valid 1 number prefix
     // except for 0
     var acc_re = /(\d{1,6})-(\d{6,10})\/(\d{4})/g;
     var acc0_re = /[^-](\d{6,10})\/(\d{4})/g;
+    var acc1_re = /(\d{1,6})-(\d{6,10})[^0-9]/g;
+    var acc2_re = /[^-](\d{6,10})/g;
 
     // extract all prefixed numbers
     // and append all non-prefixed numbers, setting prefix to '0'
@@ -112,6 +114,10 @@ function extractAccounts(s) {
     var accs = extractAll(s, acc_re)
         .concat(extractAll(s, acc0_re)
                 .map(function(e) {e.splice(1, 0, '0'); return e;}))
+        .concat(extractAll(s, acc1_re)
+                .map(function(e) {e.push("0000"); return e;}))
+        .concat(extractAll(s, acc2_re)
+                .map(function(e) {e.splice(1, 0, '0'); e.push("0000"); return e;}))
         .filter(function(e) {return validateAcc(e[1], e[2], e[3]);});
 
     // reformat the list
@@ -224,13 +230,13 @@ function processText(msg) {
     if (vals.amounts.length > 0) {
         fillForm("amount", vals.amounts[0].amount);
     }
-    if (vals.vsymbols.length > 0) { 
+    if (vals.vsymbols.length > 0) {
         fillForm("vs", vals.vsymbols[0].vs);
     }
-    if (vals.ssymbols.length > 0) { 
+    if (vals.ssymbols.length > 0) {
         fillForm("ss", vals.ssymbols[0].ss);
     }
-    if (vals.ksymbols.length > 0) { 
+    if (vals.ksymbols.length > 0) {
         fillForm("ks", vals.ksymbols[0].ks);
     }
 
@@ -262,7 +268,7 @@ function collectParams() {
         return {};
     }
 
-    // retrieves values for given fields 
+    // retrieves values for given fields
     // and returns them in {"field": getVal("field")}
     function multiGet(names) {
         return names.reduce(function(acc, x){
@@ -301,6 +307,8 @@ qr_params = {};
 function ticker() {
     var params = collectParams();
     if(!objEquals(params, qr_params)) {
+        fillForm("bank", banks[params.bankCode]);
+
         qr_params = params;
         displayQR(qr_params);
     }
