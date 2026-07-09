@@ -1,9 +1,7 @@
 //
 // this is called when the popup is invoked
-// it registers a callback and then injects a script into
-// current active tab
-// the injected script grabs the selected text and sends it back
-// to the popup as a message
+// it runs a small script in the current active tab that
+// grabs the selected text and returns it for processing
 //
 
 // mix of information in
@@ -317,8 +315,16 @@ function ticker() {
 // add value checker
 window.setInterval(ticker, 500);
 
-// add listener for the selection text
-chrome.runtime.onMessage.addListener(processText);
-
-// inject the script
-chrome.tabs.executeScript(null, {file:"injected.js"});
+// grab the selected text from the active tab and process it
+async function init() {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [{ result }] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+            const sel = window.getSelection();
+            return sel.isCollapsed ? null : sel.toString();
+        },
+    });
+    if (result) processText(result);
+}
+init();
