@@ -1,55 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="cs">
 <head>
 <meta charset="UTF-8">
-<style>
-body { 
-	margin:0px; 
-	padding:0px; 
-	overflow:hidden;
-	}
-
-#txtar { 
-	height: 100px; 
-	width: 300px; 
-	max-width:780px; 
-	max-height:560px; 
-	min-width:300px; 
-	min-height:50px; 
-	padding:6px; 
-	margin:0px; 
-	background-color:white; 
-	color:#000088; 
-	border:none;
-	}
-
-</style>
+<link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
 <form>
-<table>
-<tr>
- <td><label for="to">Příjemce</label></td><td><input id="to" list="to-options" /><datalist id="to-options"></datalist></td></tr>
-<tr>
- <td><label for="bank">Banka</label></td><td><input id="bank" readonly /></td></tr>
-<tr>
- <td><label for="amount">Částka</label></td><td><input id="amount" list="amount-options"/><datalist id="amount-options"></datalist></td></tr>
-<tr>
- <td><label for="vs">Variabilní symbol</label></td><td><input id="vs" list="vs-options"/><datalist id="vs-options"></datalist></td></tr>
-<tr>
- <td><label for="ss">Specifický symbol</label></td><td><input id="ss" list="ss-options"/><datalist id="ss-options"></datalist></td></tr>
-<tr>
- <td><label for="ks">Konstantní symbol</label></td><td><input id="ks" list="ks-options"/><datalist id="ks-options"></datalist></td></tr>
-<!--<tr>
- <td><label for="identifier">Můj popis</label></td><td><input id="identifier"/></td></tr>-->
-<tr>
- <td><label for="message">Zpráva pro příjemce</label></td><td><input id="message"/></td></tr>
+  <label for="to">Příjemce</label>
+  <input id="to" list="to-options" /><datalist id="to-options"></datalist>
+
+  <label for="bank">Banka</label>
+  <input id="bank" readonly />
+
+  <label for="amount">Částka</label>
+  <input id="amount" list="amount-options" inputmode="decimal" /><datalist id="amount-options"></datalist>
+
+  <label for="vs">Variabilní symbol</label>
+  <input id="vs" list="vs-options" inputmode="numeric" /><datalist id="vs-options"></datalist>
+
+  <label for="ss">Specifický symbol</label>
+  <input id="ss" list="ss-options" inputmode="numeric" /><datalist id="ss-options"></datalist>
+
+  <label for="ks">Konstantní symbol</label>
+  <input id="ks" list="ks-options" inputmode="numeric" /><datalist id="ks-options"></datalist>
+
+  <label for="message">Zpráva pro příjemce</label>
+  <input id="message" />
 </form>
 
+<div id="qr"><img id="qr_img" src="img/empty-qr.png" width="298" height="293" alt="QR platba"></div>
+
 <script type="module" src="popup.js"></script>
-
-<div id="qr"><img id="qr_img" src="img/empty-qr.png" width="298" height="293"></div>
-
 </body>
 </html>
