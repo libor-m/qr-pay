@@ -1,0 +1,8 @@
+{
+  "name": "qr-pay",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test 'extension/*.test.js'"
+  }
+}
