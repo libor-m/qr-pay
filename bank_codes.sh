@@ -9,11 +9,10 @@ wget -q -O kody_bank_CR.csv 'https://www.cnb.cz/cs/platebni-styk/.galleries/ucty
 OF=extension/banks.js
 {
     echo "export const banks = {"
-    # strip the BOM and CRs, skip the header;
+    # strip CRs and skip the header (which also drops the BOM);
     # columns: code;provider;BIC;CERTIS
-    sed '1s/^\xEF\xBB\xBF//' kody_bank_CR.csv |
-        tr -d '\r' |
+    tr -d '\r' < kody_bank_CR.csv |
         tail -n +2 |
         awk -F';' '{ gsub(/^ +| +$/, "", $2); print "\t\"" $1 "\": \"" $2 "\"," }'
     echo "};"
-} > $OF
+} > "$OF"
