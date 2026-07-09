@@ -48,7 +48,8 @@ function objEquals(x, y) {
 // into an array
 function extractAll(s, re) {
     var res = [];
-    while (match = re.exec(s)) {
+    var match;
+    while ((match = re.exec(s))) {
         res.push(match)
     }
     return res;
@@ -69,7 +70,7 @@ function extractAll(s, re) {
 function validateAcc(pfx, num, bank) {
     // checks the mod11 criterion
     function mod11(s) {
-        tab = [1, 2, 4, 8, 5, 10, 9, 7, 3, 6];
+        var tab = [1, 2, 4, 8, 5, 10, 9, 7, 3, 6];
         var sum = s.split('')
             .reverse()
             .map(function(x) {return parseInt(x)})
@@ -179,7 +180,7 @@ function arrayMax(arr) {
 // modify object o by adding attributes from other
 // updating confilcting values to values from other
 function update(o, other) {
-    for (k in other) {
+    for (var k in other) {
         o[k] = other[k]
     }
 }
@@ -281,7 +282,7 @@ function displayQR(params) {
         try {
             // error correction M is the qr-platba.cz convention
             var svg = encodeQR(spayd(params), 'svg', { ecc: 'medium', border: 2 });
-            img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+            img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
             return;
         } catch (e) {
             // invalid params (bad account, amount..) fall through to empty state
@@ -292,7 +293,7 @@ function displayQR(params) {
 
 // updates the qr if necessary
 // runs periodically, instead of juggling with onblur and onchange events
-qr_params = {};
+var qr_params = {};
 function ticker() {
     var params = collectParams();
     if(!objEquals(params, qr_params)) {
