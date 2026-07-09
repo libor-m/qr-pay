@@ -28,9 +28,9 @@ export const validateAcc = (pfx, num, bank) =>
 // most complete (and thus most confident) forms first
 export function extractAccounts(s) {
     const acc_re = /(\d{1,6})-(\d{6,10})\/(\d{4})/g;   // prefix-number/bank
-    const acc0_re = /[^-](\d{6,10})\/(\d{4})/g;        // number/bank
+    const acc0_re = /(?<!-)(\d{6,10})\/(\d{4})/g;       // number/bank
     const acc1_re = /(\d{1,6})-(\d{6,10})[^0-9]/g;     // prefix-number
-    const acc2_re = /[^-](\d{6,10})/g;                 // bare number
+    const acc2_re = /(?<!-)(\d{6,10})/g;                // bare number
 
     const candidates = [
         ...extractAll(s, acc_re).map((m) => [m[1], m[2], m[3]]),

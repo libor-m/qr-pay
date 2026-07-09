@@ -25,7 +25,7 @@ const fillOptions = (id, values) => {
 };
 
 // drop duplicates, keeping first occurrence (Array.filter callback)
-const uniq = (v, i, arr) => arr.indexOf(v) == i;
+const uniq = (v, i, arr) => arr.indexOf(v) === i;
 
 // the main worker
 // - extract all possible payment details
@@ -72,7 +72,7 @@ function collectParams() {
     const res = parseAccount(getVal('to'));
     for (const f of ['amount', 'vs', 'ss', 'ks', 'message']) {
         const v = getVal(f);
-        if (v != '') {
+        if (v !== '') {
             res[f] = v;
         }
     }
@@ -87,7 +87,7 @@ function displayQR(params) {
         try {
             // error correction M is the qr-platba.cz convention
             const svg = encodeQR(spayd(params), 'svg', { ecc: 'medium', border: 2 });
-            img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+            img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
             return;
         } catch (e) {
             // invalid params (bad account, amount..) fall through to empty state

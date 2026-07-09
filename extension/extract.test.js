@@ -27,6 +27,26 @@ test('account without bank code gets the 0000 placeholder', () => {
     assert.equal(accountStr(accs[0]), '19-2000145399/0000');
 });
 
+test('account at the very start of the text is found', () => {
+    // all forms, with no preceding character available to consume
+    assert.equal(accountStr(extractAccounts('222885/5500 je nas ucet')[0]),
+        '222885/5500');
+    assert.equal(accountStr(extractAccounts('19-2000145399/0800 je nas ucet')[0]),
+        '19-2000145399/0800');
+    assert.equal(accountStr(extractAccounts('2000145399 je nas ucet')[0]),
+        '2000145399/0000');
+    // and the whole text being just the account
+    assert.equal(accountStr(extractAccounts('222885/5500')[0]), '222885/5500');
+});
+
+test('prefixed account number is not re-matched without its prefix', () => {
+    // the lookbehind keeps the number right after '19-' from
+    // also matching as a standalone bank-less account
+    const accs = extractAccounts('ucet 19-2000145399/0800');
+    assert.ok(!accs.some((a) => a.accountPrefix === '0'
+        && a.accountNumber === '2000145399'));
+});
+
 test('confidence order: full account form comes first', () => {
     const accs = extractAccounts('ucty 19-2000145399/0800 nebo 222885/5500');
     assert.equal(accountStr(accs[0]), '19-2000145399/0800');
