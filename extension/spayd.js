@@ -42,7 +42,7 @@ function symbol(name, value) {
 // message normalization matching paylibo: strip diacritics, uppercase,
 // drop the '*' field separator and control chars, cap at 60 chars
 function normalizeMsg(s) {
-    return s.normalize('NFD')
+    return String(s).normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toUpperCase()
         .replace(/[*\x00-\x1f]/g, '')
@@ -54,14 +54,18 @@ function normalizeMsg(s) {
 // ({accountPrefix, accountNumber, bankCode, amount, vs, ss, ks, message});
 // empty fields are omitted, field order matches paylibo output
 export function spayd(params) {
+    // present-and-non-empty, so falsy-but-provided values like numeric 0
+    // go through validation instead of being silently dropped
+    const provided = (v) => v != null && v !== '';
+
     const fields = [
         ['ACC', czIban(params.accountPrefix, params.accountNumber, params.bankCode)],
     ];
-    if (params.amount) fields.push(['AM', formatAmount(params.amount)]);
+    if (provided(params.amount)) fields.push(['AM', formatAmount(params.amount)]);
     fields.push(['CC', 'CZK']);
-    if (params.message) fields.push(['MSG', normalizeMsg(params.message)]);
-    if (params.ks) fields.push(['X-KS', symbol('ks', params.ks)]);
-    if (params.vs) fields.push(['X-VS', symbol('vs', params.vs)]);
-    if (params.ss) fields.push(['X-SS', symbol('ss', params.ss)]);
+    if (provided(params.message)) fields.push(['MSG', normalizeMsg(params.message)]);
+    if (provided(params.ks)) fields.push(['X-KS', symbol('ks', params.ks)]);
+    if (provided(params.vs)) fields.push(['X-VS', symbol('vs', params.vs)]);
+    if (provided(params.ss)) fields.push(['X-SS', symbol('ss', params.ss)]);
     return 'SPD*1.0*' + fields.map(([k, v]) => `${k}:${v}`).join('*');
 }

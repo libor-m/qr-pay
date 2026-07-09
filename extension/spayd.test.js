@@ -66,6 +66,14 @@ test('spayd sanitizes message', () => {
     assert.ok(msg.startsWith('ABX'));
 });
 
+test('spayd validates falsy-but-provided values instead of dropping them', () => {
+    const acc = { accountPrefix: '0', accountNumber: '222885', bankCode: '5500' };
+    // numeric 0 amount is invalid and must throw, not silently omit AM
+    assert.throws(() => spayd({ ...acc, amount: 0 }));
+    // numeric 0 symbol is a valid value and must be encoded
+    assert.match(spayd({ ...acc, amount: '10', vs: 0 }), /\*X-VS:0$/);
+});
+
 test('spayd rejects invalid values', () => {
     const acc = { accountPrefix: '0', accountNumber: '222885', bankCode: '5500' };
     assert.throws(() => spayd({ ...acc, amount: 'abc' }));
