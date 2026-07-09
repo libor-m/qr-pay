@@ -4,12 +4,9 @@
 // grabs the selected text and returns it for processing
 //
 
-// mix of information in
-// http://qr-platba.cz/pro-vyvojare/restful-api/
-// and
-// http://qr-platba.cz/pro-vyvojare/restful-api/#generator-czech-image
-// was used - the information is not always correct
-var qr_api = "https://api.paylibo.com/paylibo/generator/czech/image?"
+import { banks } from './banks.js';
+import { spayd } from './spayd.js';
+import encodeQR from './vendor/qr.js';
 
 // 'deep compare' - compare all values for all keys
 // of a and b
@@ -45,14 +42,6 @@ function objEquals(x, y) {
       // allows x[ p ] to be set to undefined
   }
   return true;
-}
-
-// encode key-value pairs in object into uri 'GET' string
-function obj2uri(obj) {
-    return Object.keys(obj).map(
-        function(k) {
-            return encodeURIComponent(k) + "=" + encodeURIComponent(obj[k]);
-        }).join('&');
 }
 
 // extract all matches of given 'g' regular
@@ -284,19 +273,21 @@ function collectParams() {
     return res;
 }
 
-// image testing url:
-// https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=222885&bankCode=5500&amount=250.00&currency=CZK&vs=333&message=FOND%20HUMANITY%20CCK
-// TODO: looks like it's a simple spayd encoded in any QR, so we can avoid the api in the future
-// http://davidshimjs.github.io/qrcodejs/
-// would have to write own spayd encoder..
+// render the SPAYD string as a QR code, all locally -
+// payment data never leaves the machine
 function displayQR(params) {
-    // set the source
     var img = document.getElementById("qr_img");
     if(params.accountNumber && params.amount) {
-        img.src = qr_api + obj2uri(params);
-    } else {
-        img.src = 'img/empty-qr.png';
+        try {
+            // error correction M is the qr-platba.cz convention
+            var svg = encodeQR(spayd(params), 'svg', { ecc: 'medium', border: 2 });
+            img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+            return;
+        } catch (e) {
+            // invalid params (bad account, amount..) fall through to empty state
+        }
     }
+    img.src = 'img/empty-qr.png';
 }
 
 // updates the qr if necessary

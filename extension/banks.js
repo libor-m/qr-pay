@@ -1,4 +1,4 @@
-var banks = {
+export const banks = {
 	"0100": "Komerční banka, a.s.",
 	"0300": "Československá obchodní banka, a.s.",
 	"0600": "MONETA Money Bank, a.s.",
