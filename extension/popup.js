@@ -216,7 +216,7 @@ function processText(msg) {
         fillForm("to", accs[0]);
 
         // bank is 'read only', only for control
-        fillForm("bank", banks[vals.accounts[0].bankCode]);
+        fillForm("bank", banks[vals.accounts[0].bankCode] || "");
     }
 
     // prefer the highest amount found
@@ -309,7 +309,7 @@ var qr_params = {};
 function ticker() {
     var params = collectParams();
     if(!objEquals(params, qr_params)) {
-        fillForm("bank", banks[params.bankCode]);
+        fillForm("bank", banks[params.bankCode] || "");
 
         qr_params = params;
         displayQR(qr_params);
