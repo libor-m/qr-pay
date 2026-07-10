@@ -80,8 +80,8 @@ function validateAcc(pfx, num, bank) {
         return ( sum % 11 ) == 0;
     }
 
-    // TODO enable after testing
-    return mod11(pfx) && mod11(num); // && (bank in banks);
+    // '0000' is the placeholder for accounts extracted without a bank code
+    return mod11(pfx) && mod11(num) && (bank == '0000' || bank in banks);
 }
 
 // try to pick all valid account numbers in the text
