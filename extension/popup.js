@@ -162,6 +162,22 @@ function fillForm(id, val) {
     e.value = val;
 }
 
+// clear and repopulate a datalist with candidate values
+function fillOptions(id, values) {
+    var dl = document.getElementById(id);
+    dl.textContent = '';
+    values.forEach(function(v) {
+        var opt = document.createElement('option');
+        opt.value = v;
+        dl.appendChild(opt);
+    });
+}
+
+// drop duplicates, keeping first occurrence (Array.filter callback)
+function uniq(v, i, arr) {
+    return arr.indexOf(v) == i;
+}
+
 // convert account object to string
 function accountStr(o) {
     if (o.accountPrefix == '0') {
@@ -185,48 +201,44 @@ function update(o, other) {
     }
 }
 // the main worker
-// - extract all possible the details
-// - display them in form
-// - let the user select (TODO)
+// - extract all possible payment details
+// - prefill the form with the most likely candidate
+// - offer all the alternatives in each field's datalist
 function processText(msg) {
     // extract all possible payment details
     var vals = extractDetails(msg);
 
-    // TODO: use datalist with all acceptable values
-    // sorted by preference
-    // http://stackoverflow.com/questions/14614702/html-combo-box-with-option-to-type-an-entry
-    // datalist does not work in popups: https://code.google.com/p/chromium/issues/detail?id=161302
-    // so this will wait until it resolves..;)
-
-    // prefer ceska sporitelna (after all it's my tool;)
-    // then any
-    if (vals.accounts.length > 0) {
-        var cs = vals.accounts.filter(function(e) {return e.bankCode == '0800';});
-        var chosenAcc = vals.accounts[0];
-        if (cs.length > 0) {
-            chosenAcc = cs[0];
-        }
-
-        fillForm("to", accountStr(chosenAcc));
+    // accounts come out of extractAccounts in confidence order:
+    // fully formed prefix-number/bank matches first, bank-less guesses last
+    var accs = vals.accounts.map(accountStr).filter(uniq);
+    fillOptions("to-options", accs);
+    if (accs.length > 0) {
+        fillForm("to", accs[0]);
 
         // bank is 'read only', only for control
-        fillForm("bank", banks[chosenAcc.bankCode]);
+        fillForm("bank", banks[vals.accounts[0].bankCode] || "");
     }
 
-    // prefer higher values from more reliable extractors (xx czk; xx kc; xx,-)
-    // then all numbers
-    if (vals.amounts.length > 0) {
-        fillForm("amount", vals.amounts[0].amount);
+    // prefer the highest amount found
+    var amounts = vals.amounts.map(function(e) {return e.amount;})
+        .filter(uniq)
+        .sort(function(a, b) {return parseFloat(b) - parseFloat(a);});
+    fillOptions("amount-options", amounts);
+    if (amounts.length > 0) {
+        fillForm("amount", amounts[0]);
     }
-    if (vals.vsymbols.length > 0) {
-        fillForm("vs", vals.vsymbols[0].vs);
-    }
-    if (vals.ssymbols.length > 0) {
-        fillForm("ss", vals.ssymbols[0].ss);
-    }
-    if (vals.ksymbols.length > 0) {
-        fillForm("ks", vals.ksymbols[0].ks);
-    }
+
+    // symbols keep extraction order
+    [["vs", vals.vsymbols.map(function(e) {return e.vs;})],
+     ["ss", vals.ssymbols.map(function(e) {return e.ss;})],
+     ["ks", vals.ksymbols.map(function(e) {return e.ks;})]]
+    .forEach(function(fv) {
+        var field = fv[0], values = fv[1].filter(uniq);
+        fillOptions(field + "-options", values);
+        if (values.length > 0) {
+            fillForm(field, values[0]);
+        }
+    });
 
     // TODO: add custom messages for sender (use window title as default)
     // need to ask CS if they read it from any spayd field
@@ -297,7 +309,7 @@ var qr_params = {};
 function ticker() {
     var params = collectParams();
     if(!objEquals(params, qr_params)) {
-        fillForm("bank", banks[params.bankCode]);
+        fillForm("bank", banks[params.bankCode] || "");
 
         qr_params = params;
         displayQR(qr_params);
