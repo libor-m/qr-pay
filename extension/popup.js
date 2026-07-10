@@ -4,12 +4,9 @@
 // grabs the selected text and returns it for processing
 //
 
-// mix of information in
-// http://qr-platba.cz/pro-vyvojare/restful-api/
-// and
-// http://qr-platba.cz/pro-vyvojare/restful-api/#generator-czech-image
-// was used - the information is not always correct
-var qr_api = "https://api.paylibo.com/paylibo/generator/czech/image?"
+import { banks } from './banks.js';
+import { spayd } from './spayd.js';
+import encodeQR from './vendor/qr.js';
 
 // 'deep compare' - compare all values for all keys
 // of a and b
@@ -47,19 +44,12 @@ function objEquals(x, y) {
   return true;
 }
 
-// encode key-value pairs in object into uri 'GET' string
-function obj2uri(obj) {
-    return Object.keys(obj).map(
-        function(k) {
-            return encodeURIComponent(k) + "=" + encodeURIComponent(obj[k]);
-        }).join('&');
-}
-
 // extract all matches of given 'g' regular
 // into an array
 function extractAll(s, re) {
     var res = [];
-    while (match = re.exec(s)) {
+    var match;
+    while ((match = re.exec(s))) {
         res.push(match)
     }
     return res;
@@ -80,7 +70,7 @@ function extractAll(s, re) {
 function validateAcc(pfx, num, bank) {
     // checks the mod11 criterion
     function mod11(s) {
-        tab = [1, 2, 4, 8, 5, 10, 9, 7, 3, 6];
+        var tab = [1, 2, 4, 8, 5, 10, 9, 7, 3, 6];
         var sum = s.split('')
             .reverse()
             .map(function(x) {return parseInt(x)})
@@ -190,7 +180,7 @@ function arrayMax(arr) {
 // modify object o by adding attributes from other
 // updating confilcting values to values from other
 function update(o, other) {
-    for (k in other) {
+    for (var k in other) {
         o[k] = other[k]
     }
 }
@@ -284,24 +274,26 @@ function collectParams() {
     return res;
 }
 
-// image testing url:
-// https://api.paylibo.com/paylibo/generator/czech/image?accountNumber=222885&bankCode=5500&amount=250.00&currency=CZK&vs=333&message=FOND%20HUMANITY%20CCK
-// TODO: looks like it's a simple spayd encoded in any QR, so we can avoid the api in the future
-// http://davidshimjs.github.io/qrcodejs/
-// would have to write own spayd encoder..
+// render the SPAYD string as a QR code, all locally -
+// payment data never leaves the machine
 function displayQR(params) {
-    // set the source
     var img = document.getElementById("qr_img");
     if(params.accountNumber && params.amount) {
-        img.src = qr_api + obj2uri(params);
-    } else {
-        img.src = 'img/empty-qr.png';
+        try {
+            // error correction M is the qr-platba.cz convention
+            var svg = encodeQR(spayd(params), 'svg', { ecc: 'medium', border: 2 });
+            img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+            return;
+        } catch (e) {
+            // invalid params (bad account, amount..) fall through to empty state
+        }
     }
+    img.src = 'img/empty-qr.png';
 }
 
 // updates the qr if necessary
 // runs periodically, instead of juggling with onblur and onchange events
-qr_params = {};
+var qr_params = {};
 function ticker() {
     var params = collectParams();
     if(!objEquals(params, qr_params)) {
